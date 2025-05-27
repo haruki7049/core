@@ -1,5 +1,5 @@
 {
-  description = "A ediot's flake";
+  description = "A core's flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -52,7 +52,7 @@
             x86_64-darwin.CARGO_BUILD_TARGET = "x86_64-apple-darwin";
             aarch64-darwin.CARGO_BUILD_TARGET = "aarch64-apple-darwin";
           };
-          ediot = craneLib.buildPackage {
+          core = craneLib.buildPackage {
             inherit src cargoArtifacts;
             strictDeps = true;
             doCheck = true;
@@ -97,14 +97,14 @@
           };
 
           packages = {
-            inherit ediot;
-            default = ediot;
+            inherit core;
+            default = core;
             doc = cargo-doc;
           };
 
           checks = {
             inherit
-              ediot
+              core
               cargo-clippy
               cargo-doc
               ;
