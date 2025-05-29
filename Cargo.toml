@@ -9,4 +9,9 @@ repository = "https://github.com/haruki7049/core"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[workspace]
+resolver = "3"
+
+members = ["core-lang"]
+
 [dependencies]

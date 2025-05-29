@@ -1,0 +1,4 @@
+program = { SOI ~ punct* ~ (sexpr ~ punct*)* ~ EOI }
+punct = _{ " " | "\n" | "\t" }
+sexpr = @{ "(" ~ punct* ~ (word ~ punct+ | sexpr ~ punct+)* ~ ")" }
+word = @{ (ASCII_ALPHANUMERIC | "_")+ }
