@@ -1,4 +1,9 @@
-program = { SOI ~ punct* ~ (sexpr ~ punct*)* ~ EOI }
+program = { SOI ~ punct* ~ (punct* ~ sexpr)* ~ punct* ~ EOI }
+
 punct = _{ " " | "\n" | "\t" }
-sexpr = @{ "(" ~ punct* ~ (word ~ punct+ | sexpr ~ punct+)* ~ ")" }
-word = @{ (ASCII_ALPHANUMERIC | "_")+ }
+left_parenthesis = @{ "(" }
+right_parenthesis = @{ ")" }
+
+sexpr = { left_parenthesis ~ punct* ~ (word ~ punct* | sexpr ~ punct* | number ~ punct*)* ~ right_parenthesis }
+number = @{ ASCII_DIGIT+ }
+word = @{ (ASCII_ALPHA | "_")+ }

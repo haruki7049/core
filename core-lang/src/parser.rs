@@ -10,25 +10,40 @@ pub struct CoreLangParser;
 pub enum Token {
     SExpression(Vec<Token>),
     Word(String),
-    Int(i32),
+    Number(u32),
     Data(u64),
 }
 
 fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>> {
     match pair.as_rule() {
-        Rule::EOI | Rule::punct | Rule::sexpr | Rule::word => unreachable!(),
+        Rule::EOI
+        | Rule::punct
+        | Rule::sexpr
+        | Rule::word
+        | Rule::number
+        | Rule::left_parenthesis
+        | Rule::right_parenthesis => unreachable!(),
         Rule::program => {
-            let rule = pair.into_inner();
-            dbg!(&rule);
             let mut result: Vec<Token> = Vec::new();
 
+            let rule = pair.into_inner();
             rule.clone().for_each(|w| match w.as_rule() {
                 Rule::sexpr => result.push(parse_sexpr(w).unwrap()),
                 Rule::word => {
                     let str: String = String::from(w.as_span().as_str());
                     result.push(Token::Word(str));
                 }
-                Rule::program | Rule::punct => unreachable!(),
+                Rule::number => {
+                    let number: u32 = w
+                        .as_span()
+                        .as_str()
+                        .parse::<u32>()
+                        .expect("PARSE_ERROR: Failed to parse number");
+                    result.push(Token::Number(number));
+                }
+                Rule::program | Rule::punct | Rule::left_parenthesis | Rule::right_parenthesis => {
+                    unreachable!()
+                }
                 Rule::EOI => return,
             });
 
@@ -37,13 +52,41 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
     }
 }
 
+fn parse_word(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
+    let str: String = String::from(word.as_span().as_str());
+    Ok(Token::Word(str))
+}
+
+fn parse_number(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
+    let number: u32 = word
+        .as_span()
+        .as_str()
+        .parse::<u32>()
+        .expect("PARSE_ERROR: Failed to parse number");
+    Ok(Token::Number(number))
+}
+
 fn parse_sexpr(sexpr: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
     let mut result: Vec<Token> = Vec::new();
-    let mut rule = sexpr.into_inner();
+
+    let rule = sexpr.into_inner();
     let mut words: Vec<Pair<Rule>> = rule.into_iter().collect();
 
+    words.pop(); // right_parenthesis
+    words.reverse(); // Reverse to pop left_parenthesis
+    words.pop(); // left_parenthesis
+    words.reverse(); // Reverse to fix the order
+
     for w in words {
-        dbg!(w);
+        match w.as_rule() {
+            Rule::sexpr => result.push(parse_sexpr(w)?),
+            Rule::word => result.push(parse_word(w)?),
+            Rule::number => result.push(parse_number(w)?),
+            Rule::program | Rule::punct | Rule::left_parenthesis | Rule::right_parenthesis => {
+                unreachable!()
+            }
+            Rule::EOI => break,
+        }
     }
 
     Ok(Token::SExpression(result))
@@ -62,19 +105,33 @@ mod tests {
 
     #[test]
     fn parse_example() -> Result<(), Box<dyn std::error::Error>> {
+        // This syntax allows empty parentheses
         let token: Vec<Token> = parse("( )")?;
         assert_eq!(token, vec![Token::SExpression(vec![])]);
 
+        // This syntax allows empty parentheses without any spaces
         let token: Vec<Token> = parse("()")?;
         assert_eq!(token, vec![Token::SExpression(vec![])]);
 
+        // It can load Define syntax
+        let token: Vec<Token> = parse("( define main 1 )")?;
+        assert_eq!(
+            token,
+            vec![Token::SExpression(vec![
+                Token::Word(String::from("define")),
+                Token::Word(String::from("main")),
+                Token::Number(1)
+            ])]
+        );
+
+        // It can load Define syntax
         let token: Vec<Token> = parse("(define main 1)")?;
         assert_eq!(
             token,
             vec![Token::SExpression(vec![
                 Token::Word(String::from("define")),
                 Token::Word(String::from("main")),
-                Token::Int(1)
+                Token::Number(1)
             ])]
         );
 
