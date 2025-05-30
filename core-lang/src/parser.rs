@@ -137,4 +137,123 @@ mod tests {
 
         Ok(())
     }
+
+    #[test]
+    fn parse_multiline() -> Result<(), Box<dyn std::error::Error>> {
+        let token: Vec<Token> = parse("( ) ( )")?;
+        assert_eq!(
+            token,
+            vec![Token::SExpression(vec![]), Token::SExpression(vec![])]
+        );
+
+        let token: Vec<Token> = parse("( )\n( )")?;
+        assert_eq!(
+            token,
+            vec![Token::SExpression(vec![]), Token::SExpression(vec![])]
+        );
+
+        let token: Vec<Token> = parse("() ()")?;
+        assert_eq!(
+            token,
+            vec![Token::SExpression(vec![]), Token::SExpression(vec![])]
+        );
+
+        let token: Vec<Token> = parse("()\n()")?;
+        assert_eq!(
+            token,
+            vec![Token::SExpression(vec![]), Token::SExpression(vec![])]
+        );
+
+        let token: Vec<Token> = parse("( define main 1 ) ( define main 1 )")?;
+        assert_eq!(
+            token,
+            vec![
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ]),
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ])
+            ]
+        );
+
+        let token: Vec<Token> = parse("( define main 1 )\n( define main 1 )")?;
+        assert_eq!(
+            token,
+            vec![
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ]),
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ])
+            ]
+        );
+
+        let token: Vec<Token> = parse("(define main 1) (define main 1)")?;
+        assert_eq!(
+            token,
+            vec![
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ]),
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ])
+            ]
+        );
+
+        let token: Vec<Token> = parse("(define main 1)\n(define main 1)")?;
+        assert_eq!(
+            token,
+            vec![
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ]),
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ])
+            ]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn parse_multiple_sexpr() -> Result<(), Box<dyn std::error::Error>> {
+        let token: Vec<Token> = parse("(define main 1)(define main 1)")?;
+        assert_eq!(
+            token,
+            vec![
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ]),
+                Token::SExpression(vec![
+                    Token::Word(String::from("define")),
+                    Token::Word(String::from("main")),
+                    Token::Number(1)
+                ])
+            ]
+        );
+
+        Ok(())
+    }
 }
