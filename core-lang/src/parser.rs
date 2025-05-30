@@ -12,6 +12,8 @@ pub enum Token {
     Word(String),
     Number(u32),
     Data(u64),
+    Define,
+    DefineSyntax,
 }
 
 fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>> {
@@ -54,7 +56,11 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
 
 fn parse_word(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
     let str: String = String::from(word.as_span().as_str());
-    Ok(Token::Word(str))
+    match str.as_str() {
+        "define" => Ok(Token::Define),
+        "define_syntax" => Ok(Token::DefineSyntax),
+        _ => Ok(Token::Word(str)),
+    }
 }
 
 fn parse_number(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
@@ -118,7 +124,7 @@ mod tests {
         assert_eq!(
             token,
             vec![Token::SExpression(vec![
-                Token::Word(String::from("define")),
+                Token::Define,
                 Token::Word(String::from("main")),
                 Token::Number(1)
             ])]
@@ -129,7 +135,7 @@ mod tests {
         assert_eq!(
             token,
             vec![Token::SExpression(vec![
-                Token::Word(String::from("define")),
+                Token::Define,
                 Token::Word(String::from("main")),
                 Token::Number(1)
             ])]
@@ -169,12 +175,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
@@ -186,12 +192,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
@@ -203,12 +209,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
@@ -220,12 +226,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
@@ -242,12 +248,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Word(String::from("define")),
+                    Token::Define,
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
