@@ -77,7 +77,7 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
                     unreachable!()
                 }
                 Rule::string => todo!(),
-                Rule::EOI => return,
+                Rule::EOI => (),
             });
 
             Ok(result)
