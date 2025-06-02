@@ -1,8 +1,8 @@
+use crate::token::{Literal, Token};
 use pest::Parser;
 use pest::iterators::Pair;
 use pest_derive::Parser;
 use std::str::FromStr;
-use crate::token::{Token, Literal};
 
 #[derive(Parser)]
 #[grammar = "sexpr.pest"]
