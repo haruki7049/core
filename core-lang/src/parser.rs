@@ -1,6 +1,7 @@
 use pest::Parser;
 use pest::iterators::Pair;
 use pest_derive::Parser;
+use std::str::FromStr;
 
 #[derive(Parser)]
 #[grammar = "sexpr.pest"]
@@ -12,15 +13,62 @@ pub enum Token {
     Word(String),
     Number(u64),
     String(String),
+    Literal(Literal),
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum Literal {
+    Cons,
+    Car,
+    Cdr,
+    If,
+    Lambda,
+    Begin,
     Define,
     DefineSyntax,
+    CallCc,
+}
+
+impl std::str::FromStr for Literal {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "cons" => Ok(Literal::Cons),
+            "car" => Ok(Literal::Car),
+            "cdr" => Ok(Literal::Cdr),
+            "if" => Ok(Literal::If),
+            "lambda" => Ok(Literal::Lambda),
+            "begin" => Ok(Literal::Begin),
+            "define" => Ok(Literal::Define),
+            "define_syntax" => Ok(Literal::DefineSyntax),
+            "call_cc" => Ok(Literal::CallCc),
+            _ => Err(String::from("Failed to parse literal. Perhaps this is a word")),
+        }
+    }
+}
+
+impl std::fmt::Display for Literal {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Literal::Cons => write!(f, "cons"),
+            Literal::Car => write!(f, "car"),
+            Literal::Cdr => write!(f, "cdr"),
+            Literal::If => write!(f, "if"),
+            Literal::Lambda => write!(f, "lambda"),
+            Literal::Begin => write!(f, "begin"),
+            Literal::Define => write!(f, "define"),
+            Literal::DefineSyntax => write!(f, "define_syntax"),
+            Literal::CallCc => write!(f, "call_cc"),
+        }
+    }
 }
 
 fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>> {
     match pair.as_rule() {
         Rule::EOI
         | Rule::punct
-        | Rule::sexpr
+         | Rule::sexpr
         | Rule::word
         | Rule::number
         | Rule::string
@@ -58,10 +106,9 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
 
 fn parse_word(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
     let str: String = String::from(word.as_span().as_str());
-    match str.as_str() {
-        "define" => Ok(Token::Define),
-        "define_syntax" => Ok(Token::DefineSyntax),
-        _ => Ok(Token::Word(str)),
+    match Literal::from_str(&str) {
+        Ok(v) => Ok(Token::Literal(v)),
+        Err(_) => Ok(Token::Word(str)),
     }
 }
 

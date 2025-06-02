@@ -1,13 +1,13 @@
 pub mod parser;
 
-use crate::parser::Token;
+use crate::parser::{Token, Literal};
 use std::path::PathBuf;
 
 #[derive(Debug)]
 pub struct CoreAST {
     function: Token,
     name: Token,
-    value: Vec<Token>,
+    value: Token,
 }
 
 pub fn eval(config_path: &PathBuf) -> Result<Vec<CoreAST>, Box<dyn std::error::Error>> {
@@ -34,7 +34,7 @@ fn eval_sexpr(mut tokens: Vec<Token>) -> Result<CoreAST, Box<dyn std::error::Err
     tokens.reverse();
 
     match function {
-        Token::Define => {
+        Token::Literal(Literal::Define) => {
             tokens.reverse();
             let name_t: Token = tokens
                 .pop()
@@ -44,9 +44,9 @@ fn eval_sexpr(mut tokens: Vec<Token>) -> Result<CoreAST, Box<dyn std::error::Err
                 .ok_or("EVAL_ERROR: No value to define a variable")?;
 
             Ok(CoreAST {
-                function: Token::Define,
+                function: Token::Literal(Literal::Define),
                 name: name_t,
-                value: vec![value_t],
+                value: value_t,
             })
         }
         _ => todo!(),
