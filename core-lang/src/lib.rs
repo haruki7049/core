@@ -1,6 +1,6 @@
 pub mod parser;
 
-use crate::parser::{Token, Literal};
+use crate::parser::{Literal, Token};
 use std::path::PathBuf;
 
 #[derive(Debug)]

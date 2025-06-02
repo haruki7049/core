@@ -43,7 +43,9 @@ impl std::str::FromStr for Literal {
             "define" => Ok(Literal::Define),
             "define_syntax" => Ok(Literal::DefineSyntax),
             "call_cc" => Ok(Literal::CallCc),
-            _ => Err(String::from("Failed to parse literal. Perhaps this is a word")),
+            _ => Err(String::from(
+                "Failed to parse literal. Perhaps this is a word",
+            )),
         }
     }
 }
@@ -68,7 +70,7 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
     match pair.as_rule() {
         Rule::EOI
         | Rule::punct
-         | Rule::sexpr
+        | Rule::sexpr
         | Rule::word
         | Rule::number
         | Rule::string
