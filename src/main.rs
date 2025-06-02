@@ -1,4 +1,5 @@
-use core_lang::parser::{self, Token};
+use core_lang::parser;
+use core_lang::token::Token;
 use directories::ProjectDirs;
 use std::path::PathBuf;
 

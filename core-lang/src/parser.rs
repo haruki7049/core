@@ -2,32 +2,11 @@ use pest::Parser;
 use pest::iterators::Pair;
 use pest_derive::Parser;
 use std::str::FromStr;
+use crate::token::{Token, Literal};
 
 #[derive(Parser)]
 #[grammar = "sexpr.pest"]
 pub struct CoreLangParser;
-
-#[derive(Debug, PartialEq, Eq)]
-pub enum Token {
-    SExpression(Vec<Token>),
-    Word(String),
-    Number(u64),
-    String(String),
-    Literal(Literal),
-}
-
-#[derive(Debug, PartialEq, Eq)]
-pub enum Literal {
-    Cons,
-    Car,
-    Cdr,
-    If,
-    Lambda,
-    Begin,
-    Define,
-    DefineSyntax,
-    CallCc,
-}
 
 impl std::str::FromStr for Literal {
     type Err = String;
@@ -114,10 +93,6 @@ fn parse_word(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
     }
 }
 
-fn parse_string(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
-    todo!();
-}
-
 fn parse_number(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
     let w: &str = word.as_span().as_str().trim();
     let number: u64 = w
@@ -146,7 +121,7 @@ fn parse_sexpr(sexpr: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
             Rule::program | Rule::punct | Rule::left_parenthesis | Rule::right_parenthesis => {
                 unreachable!()
             }
-            Rule::string => result.push(parse_string(w)?),
+            Rule::string => todo!(),
             Rule::EOI => break,
         }
     }
