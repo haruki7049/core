@@ -16,3 +16,4 @@ members = ["core-lang"]
 
 [dependencies]
 directories = "6.0.0"
+core-lang = { path = "core-lang" }

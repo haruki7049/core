@@ -6,4 +6,5 @@ right_parenthesis = @{ ")" }
 
 sexpr = { left_parenthesis ~ punct* ~ (word ~ punct* | sexpr ~ punct* | number ~ punct*)* ~ right_parenthesis }
 number = @{ ASCII_DIGIT+ }
+string = @{ "\"" }
 word = @{ (ASCII_ALPHA | "_")+ }

@@ -10,8 +10,8 @@ pub struct CoreLangParser;
 pub enum Token {
     SExpression(Vec<Token>),
     Word(String),
-    Number(u32),
-    Data(u64),
+    Number(u64),
+    String(String),
     Define,
     DefineSyntax,
 }
@@ -23,6 +23,7 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
         | Rule::sexpr
         | Rule::word
         | Rule::number
+        | Rule::string
         | Rule::left_parenthesis
         | Rule::right_parenthesis => unreachable!(),
         Rule::program => {
@@ -36,16 +37,17 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
                     result.push(Token::Word(str));
                 }
                 Rule::number => {
-                    let number: u32 = w
+                    let number: u64 = w
                         .as_span()
                         .as_str()
-                        .parse::<u32>()
+                        .parse::<u64>()
                         .expect("PARSE_ERROR: Failed to parse number");
                     result.push(Token::Number(number));
                 }
                 Rule::program | Rule::punct | Rule::left_parenthesis | Rule::right_parenthesis => {
                     unreachable!()
                 }
+                Rule::string => todo!(),
                 Rule::EOI => return,
             });
 
@@ -63,12 +65,16 @@ fn parse_word(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
     }
 }
 
+fn parse_string(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
+    todo!();
+}
+
 fn parse_number(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
-    let number: u32 = word
-        .as_span()
-        .as_str()
-        .parse::<u32>()
+    let w: &str = word.as_span().as_str().trim();
+    let number: u64 = w
+        .parse::<u64>()
         .expect("PARSE_ERROR: Failed to parse number");
+
     Ok(Token::Number(number))
 }
 
@@ -91,6 +97,7 @@ fn parse_sexpr(sexpr: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
             Rule::program | Rule::punct | Rule::left_parenthesis | Rule::right_parenthesis => {
                 unreachable!()
             }
+            Rule::string => result.push(parse_string(w)?),
             Rule::EOI => break,
         }
     }
