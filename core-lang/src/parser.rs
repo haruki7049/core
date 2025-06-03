@@ -62,7 +62,7 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
             let rule = pair.into_inner();
             rule.clone().for_each(|w| match w.as_rule() {
                 Rule::sexpr => result.push(parse_sexpr(w).unwrap()),
-                Rule::list => result.push(todo!()),
+                Rule::list => result.push(parse_list(w).unwrap()),
                 Rule::word => {
                     let str: String = String::from(w.as_span().as_str());
                     result.push(Token::Word(str));
@@ -96,7 +96,7 @@ fn parse_word(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
 }
 
 fn parse_string(string: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
-    let mut s: &str = string.as_span().as_str();
+    let s: &str = string.as_span().as_str();
     let result: String = strip_quotes(s).to_string();
 
     Ok(Token::String(result))
@@ -153,7 +153,7 @@ fn parse_list(list: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
     let mut result: Vec<Token> = Vec::new();
 
     let rule = list.into_inner();
-    let mut words: Vec<Pair<Rule>> = rule.into_iter().collect();
+    let words: Vec<Pair<Rule>> = rule.into_iter().collect();
 
     for w in words {
         match w.as_rule() {
