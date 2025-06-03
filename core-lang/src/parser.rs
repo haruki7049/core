@@ -180,7 +180,7 @@ pub fn parse(s: &str) -> Result<Vec<Token>, Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod tests {
-    use super::Token;
+    use crate::token::{Token, Literal};
     use super::parse;
 
     #[test]
@@ -198,7 +198,7 @@ mod tests {
         assert_eq!(
             token,
             vec![Token::SExpression(vec![
-                Token::Define,
+                Token::Literal(Literal::Define),
                 Token::Word(String::from("main")),
                 Token::Number(1)
             ])]
@@ -209,7 +209,7 @@ mod tests {
         assert_eq!(
             token,
             vec![Token::SExpression(vec![
-                Token::Define,
+                Token::Literal(Literal::Define),
                 Token::Word(String::from("main")),
                 Token::Number(1)
             ])]
@@ -249,12 +249,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
@@ -266,12 +266,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
@@ -283,12 +283,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
@@ -300,12 +300,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
@@ -322,12 +322,12 @@ mod tests {
             token,
             vec![
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ]),
                 Token::SExpression(vec![
-                    Token::Define,
+                    Token::Literal(Literal::Define),
                     Token::Word(String::from("main")),
                     Token::Number(1)
                 ])
