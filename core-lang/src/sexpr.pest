@@ -4,7 +4,8 @@ punct = _{ " " | "\n" | "\t" }
 left_parenthesis = @{ "(" }
 right_parenthesis = @{ ")" }
 
-sexpr = { left_parenthesis ~ punct* ~ (word ~ punct* | sexpr ~ punct* | number ~ punct*)* ~ right_parenthesis }
+sexpr = { left_parenthesis ~ punct* ~ (word ~ punct* | sexpr ~ punct* | number ~ punct* | list ~ punct* | string ~ punct*)* ~ right_parenthesis }
+list = { "'(" ~ punct* ~ (word ~ punct* | sexpr ~ punct* | number ~ punct* | list ~ punct* | string ~ punct*)* ~ ")" }
 number = @{ ASCII_DIGIT+ }
-string = @{ "\"" }
-word = @{ (ASCII_ALPHA | "_" | "-" | "+" | "*" | "/")+ }
+string = @{ "\"" ~ (!("\"") ~ ANY)* ~ "\"" }
+word = @{ (ASCII_ALPHA | "_" | "-" | "+" | "*" | "/" | "!" | "?")+ }

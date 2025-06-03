@@ -53,6 +53,7 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
         | Rule::word
         | Rule::number
         | Rule::string
+        | Rule::list
         | Rule::left_parenthesis
         | Rule::right_parenthesis => unreachable!(),
         Rule::program => {
@@ -61,10 +62,12 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
             let rule = pair.into_inner();
             rule.clone().for_each(|w| match w.as_rule() {
                 Rule::sexpr => result.push(parse_sexpr(w).unwrap()),
+                Rule::list => result.push(todo!()),
                 Rule::word => {
                     let str: String = String::from(w.as_span().as_str());
                     result.push(Token::Word(str));
                 }
+                Rule::string => result.push(parse_string(w).unwrap()),
                 Rule::number => {
                     let number: u64 = w
                         .as_span()
@@ -76,7 +79,6 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
                 Rule::program | Rule::punct | Rule::left_parenthesis | Rule::right_parenthesis => {
                     unreachable!()
                 }
-                Rule::string => todo!(),
                 Rule::EOI => (),
             });
 
@@ -86,10 +88,27 @@ fn parse_pair(pair: Pair<Rule>) -> Result<Vec<Token>, Box<dyn std::error::Error>
 }
 
 fn parse_word(word: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
-    let str: String = String::from(word.as_span().as_str());
-    match Literal::from_str(&str) {
+    let s: String = String::from(word.as_span().as_str());
+    match Literal::from_str(&s) {
         Ok(v) => Ok(Token::Literal(v)),
-        Err(_) => Ok(Token::Word(str)),
+        Err(_) => Ok(Token::Word(s)),
+    }
+}
+
+fn parse_string(string: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
+    let mut s: &str = string.as_span().as_str();
+    let result: String = strip_quotes(s).to_string();
+
+    Ok(Token::String(result))
+}
+
+fn strip_quotes(s: &str) -> &str {
+    let bytes = s.as_bytes();
+
+    if bytes.len() >= 2 && bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"' {
+        &s[1..s.len() - 1]
+    } else {
+        s
     }
 }
 
@@ -118,10 +137,34 @@ fn parse_sexpr(sexpr: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
             Rule::sexpr => result.push(parse_sexpr(w)?),
             Rule::word => result.push(parse_word(w)?),
             Rule::number => result.push(parse_number(w)?),
+            Rule::string => result.push(parse_string(w)?),
+            Rule::list => result.push(parse_list(w)?),
             Rule::program | Rule::punct | Rule::left_parenthesis | Rule::right_parenthesis => {
                 unreachable!()
             }
-            Rule::string => todo!(),
+            Rule::EOI => break,
+        }
+    }
+
+    Ok(Token::SExpression(result))
+}
+
+fn parse_list(list: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
+    let mut result: Vec<Token> = Vec::new();
+
+    let rule = list.into_inner();
+    let mut words: Vec<Pair<Rule>> = rule.into_iter().collect();
+
+    for w in words {
+        match w.as_rule() {
+            Rule::sexpr => result.push(parse_sexpr(w)?),
+            Rule::word => result.push(parse_word(w)?),
+            Rule::number => result.push(parse_number(w)?),
+            Rule::string => result.push(parse_string(w)?),
+            Rule::list => result.push(parse_list(w)?),
+            Rule::program | Rule::punct | Rule::left_parenthesis | Rule::right_parenthesis => {
+                unreachable!()
+            }
             Rule::EOI => break,
         }
     }
