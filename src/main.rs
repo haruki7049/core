@@ -1,5 +1,5 @@
-use core_lang::parser;
-use core_lang::token::Token;
+use core_lang::evaluator;
+use core_lang::ast::AST;
 use directories::ProjectDirs;
 use std::path::PathBuf;
 
@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 #[derive(Debug)]
 struct Config {
     path: PathBuf,
-    context: Vec<Token>,
+    context: AST,
 }
 
 impl Config {
@@ -23,11 +23,11 @@ impl Config {
 
         let config_path: PathBuf = PathBuf::from(proj_dirs.config_dir()).join("init.core");
         let config: String = std::fs::read_to_string(&config_path).unwrap_or_default();
-        let config_context: Vec<Token> = parser::parse(&config)?;
+        let ast: AST = evaluator::eval(&config)?;
 
         Ok(Config {
             path: config_path,
-            context: config_context,
+            context: ast,
         })
     }
 }
