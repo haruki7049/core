@@ -20,8 +20,8 @@ impl std::str::FromStr for Literal {
             "lambda" => Ok(Literal::Lambda),
             "begin" => Ok(Literal::Begin),
             "define" => Ok(Literal::Define),
-            "define_syntax" => Ok(Literal::DefineSyntax),
-            "call_cc" => Ok(Literal::CallCc),
+            "define-syntax" => Ok(Literal::DefineSyntax),
+            "call/cc" => Ok(Literal::CallCc),
             _ => Err(String::from(
                 "Failed to parse literal. Perhaps this is a word",
             )),
