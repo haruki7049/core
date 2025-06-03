@@ -1,13 +1,13 @@
 #[derive(Debug)]
 pub struct AST(pub Vec<Constant>);
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Constant {
     pub name: Value,
     pub value: Value,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Value {
     SExpression(Vec<Value>),
     Constant(Box<Constant>),
@@ -19,13 +19,13 @@ pub enum Value {
     BuiltinWord(BuiltinWord),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Boolean {
     T,
     Nil,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BuiltinWord {
     Main,
     Cli,

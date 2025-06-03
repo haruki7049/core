@@ -5,11 +5,14 @@ use core_lang::ast::Constant;
 use core_lang::ast::Value;
 
 pub fn cli(ast: &AST) -> Result<(), Box<dyn std::error::Error>> {
-    if is_t(ast, "use-cli")? {
+    let constants: Vec<Constant> = ast.0.clone();
+
+    if is_t(&constants, "use-cli")? {
         let matches = Command::new("core");
 
-        if is_t(ast, "show-version")? {
+        if is_t(&constants, "show-version")? {
             matches
+                .clone()
                 .version(env!("CARGO_PKG_VERSION"))
                 .get_matches();
         }
@@ -18,36 +21,15 @@ pub fn cli(ast: &AST) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn is_t(ast: &AST, target: &str) -> Result<bool, Box<dyn std::error::Error>> {
-    let constants: &Vec<Constant> = &ast.0;
+fn is_t(constants: &Vec<Constant>, target: &str) -> Result<bool, Box<dyn std::error::Error>> {
     for constant in constants {
+        dbg!(&constant);
+
         match constant.name {
-            Value::BuiltinWord(BuiltinWord::Cli) => {
-                match &constant.value {
-                    Value::List(value) => for v in value {
-                        let function_name: &String = function(v)?;
-                        if target == function_name {
-                            return Ok(true);
-                        }
-                    },
-                    _ => panic!(),
-                }
-            }
+            Value::BuiltinWord(BuiltinWord::Cli) => todo!(),
             _ => (),
         }
     }
 
     Ok(false)
-}
-
-fn function(value: &Value) -> Result<&String, Box<dyn std::error::Error>> {
-    match value {
-        Value::SExpression(v) => {
-            match &v[0] {
-                Value::Word(v) => Ok(v),
-                _ => panic!(),
-            }
-        }
-        _ => panic!(),
-    }
 }
