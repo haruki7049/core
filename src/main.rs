@@ -1,3 +1,4 @@
+use core_cli;
 use core_lang::ast::AST;
 use core_lang::evaluator;
 use directories::ProjectDirs;
@@ -5,7 +6,7 @@ use std::path::PathBuf;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ast = load_config()?;
-    dbg!(&ast);
+    core_cli::cli(&ast)?;
 
     Ok(())
 }

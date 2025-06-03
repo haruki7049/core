@@ -1,0 +1,8 @@
+[package]
+name = "core-cli"
+version.workspace = true
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.39" }
+core-lang = { path = "../../core-lang" }

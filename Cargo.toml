@@ -1,7 +1,6 @@
 [package]
 name = "core"
 authors = ["haruki7049 <tontonkirikiri@gmail.com>"]
-version = "0.1.0-dev"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
@@ -11,9 +10,10 @@ repository = "https://github.com/haruki7049/core"
 
 [workspace]
 resolver = "3"
-
-members = ["core-lang"]
+package.version = "0.1.0-dev"
+members = ["actions/cli", "core-lang"]
 
 [dependencies]
 directories = "6.0.0"
 core-lang = { path = "core-lang" }
+core-cli = { path = "actions/cli" }
