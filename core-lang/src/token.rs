@@ -1,6 +1,7 @@
 #[derive(Debug, PartialEq, Eq)]
 pub enum Token {
     SExpression(Vec<Token>),
+    List(Vec<Token>),
     Word(String),
     Number(u64),
     String(String),

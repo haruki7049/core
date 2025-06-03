@@ -169,7 +169,7 @@ fn parse_list(list: Pair<Rule>) -> Result<Token, Box<dyn std::error::Error>> {
         }
     }
 
-    Ok(Token::SExpression(result))
+    Ok(Token::List(result))
 }
 
 pub fn parse(s: &str) -> Result<Vec<Token>, Box<dyn std::error::Error>> {
