@@ -3,7 +3,7 @@ use crate::{
     token::Token,
 };
 
-pub fn eval(program: &String) -> Result<AST, Box<dyn std::error::Error>> {
+pub fn eval(program: &str) -> Result<AST, Box<dyn std::error::Error>> {
     let mut context: Vec<Constant> = Vec::new();
     let parser_result: Vec<Token> = parser::parse(program)?;
 
