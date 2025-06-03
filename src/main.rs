@@ -1,5 +1,5 @@
-use core_lang::evaluator;
 use core_lang::ast::AST;
+use core_lang::evaluator;
 use directories::ProjectDirs;
 use std::path::PathBuf;
 

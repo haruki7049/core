@@ -1,12 +1,6 @@
 use crate::{
-    parser,
+    ast::AST, ast::Boolean, ast::BuiltinWord, ast::Constant, ast::Value, parser, token::Literal,
     token::Token,
-    token::Literal,
-    ast::AST,
-    ast::Value,
-    ast::Constant,
-    ast::Boolean,
-    ast::BuiltinWord,
 };
 
 pub fn eval(program: &String) -> Result<AST, Box<dyn std::error::Error>> {
@@ -32,12 +26,12 @@ pub fn eval(program: &String) -> Result<AST, Box<dyn std::error::Error>> {
                             };
 
                             context.push(result);
-                        },
+                        }
                         _ => todo!(),
-                    }
+                    },
                     _ => todo!(),
                 }
-            },
+            }
             _ => unreachable!(),
         }
     }
@@ -53,7 +47,7 @@ fn eval_name(token: Token) -> Result<Value, Box<dyn std::error::Error>> {
             "t" => Ok(Value::Boolean(Boolean::T)),
             "nil" => Ok(Value::Boolean(Boolean::Nil)),
             v => Ok(Value::Word(v.to_string())),
-        }
+        },
         _ => panic!(),
     }
 }
@@ -119,7 +113,7 @@ fn eval_sexpr(mut tokens: Vec<Token>) -> Result<Value, Box<dyn std::error::Error
                 };
 
                 result.push(Value::Constant(Box::new(constant)));
-            },
+            }
             Literal::Lambda => {
                 let args_t: Token = tokens.pop().ok_or("Failed to read arguments")?;
                 let value_t: Token = tokens.pop().ok_or("Failed to read value")?;
@@ -128,9 +122,9 @@ fn eval_sexpr(mut tokens: Vec<Token>) -> Result<Value, Box<dyn std::error::Error
                 dbg!(value_t);
 
                 todo!("Lambda is not implemented yet")
-            },
+            }
             _ => todo!(),
-        }
+        },
         Token::Word(v) => {
             result.push(Value::Word(v));
             for token in tokens {
