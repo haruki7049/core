@@ -8,7 +8,7 @@ fn test() -> Result<(), Box<dyn std::error::Error>> {
         let path: PathBuf = entry?.path();
         let data: String = std::fs::read_to_string(path).unwrap_or_default();
 
-        let result: Vec<Token> = parser::parse(&data)?;
+        let _result: Vec<Token> = parser::parse(&data)?;
     }
 
     Ok(())
