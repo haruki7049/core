@@ -1,6 +1,6 @@
-use std::path::PathBuf;
 use core_lang::parser;
 use core_lang::token::Token;
+use std::path::PathBuf;
 
 #[test]
 fn test() -> Result<(), Box<dyn std::error::Error>> {

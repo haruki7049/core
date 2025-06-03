@@ -180,8 +180,8 @@ pub fn parse(s: &str) -> Result<Vec<Token>, Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod tests {
-    use crate::token::{Token, Literal};
     use super::parse;
+    use crate::token::{Literal, Token};
 
     #[test]
     fn parse_example() -> Result<(), Box<dyn std::error::Error>> {
