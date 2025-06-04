@@ -1,10 +1,10 @@
-use clap::{Command, Arg};
-use std::path::PathBuf;
+use clap::{Arg, Command};
 use core_lang::ast::AST;
 use core_lang::ast::Boolean;
 use core_lang::ast::BuiltinWord;
 use core_lang::ast::Constant;
 use core_lang::ast::Value;
+use std::path::PathBuf;
 
 pub fn cli(ast: &AST) -> Result<PathBuf, Box<dyn std::error::Error>> {
     let constants: Vec<Constant> = ast.0.clone();
@@ -13,9 +13,11 @@ pub fn cli(ast: &AST) -> Result<PathBuf, Box<dyn std::error::Error>> {
     if cli_options.use_clap {
         let matches = Command::new("core")
             .version(env!("CARGO_PKG_VERSION"))
-            .arg(Arg::new("PATH")
-                .required(true)
-                .value_parser(clap::value_parser!(PathBuf)))
+            .arg(
+                Arg::new("PATH")
+                    .required(true)
+                    .value_parser(clap::value_parser!(PathBuf)),
+            )
             .get_matches();
 
         if let Some(path) = matches.get_one::<PathBuf>("PATH") {
