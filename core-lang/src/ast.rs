@@ -69,7 +69,7 @@ impl Value {
         value.reverse();
         value.pop();
         value.reverse();
-        
+
         Ok(value)
     }
 

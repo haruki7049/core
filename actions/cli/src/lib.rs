@@ -1,7 +1,7 @@
 use clap::Command;
 use core_lang::ast::AST;
-use core_lang::ast::BuiltinWord;
 use core_lang::ast::Boolean;
+use core_lang::ast::BuiltinWord;
 use core_lang::ast::Constant;
 use core_lang::ast::Value;
 
@@ -42,7 +42,7 @@ fn judge_cli_option(constants: Vec<Constant>) -> Result<CLIOption, Box<dyn std::
                             }
                         }
                         _ => (),
-                    }
+                    },
                     _ => panic!(),
                 }
             }
@@ -59,7 +59,7 @@ fn read_boolean(value: &Value) -> Result<bool, Box<dyn std::error::Error>> {
         Value::Boolean(v) => match v {
             Boolean::T => Ok(true),
             Boolean::Nil => Ok(false),
-        }
+        },
         _ => panic!(),
     }
 }
