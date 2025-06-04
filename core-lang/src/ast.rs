@@ -74,9 +74,6 @@ impl Value {
     }
 
     pub fn is_atom(&self) -> bool {
-        match self {
-            Value::Number(_) | Value::String(_) | Value::Boolean(_) | Value::BuiltinWord(_) => true,
-            _ => false,
-        }
+        matches!(self, Value::Number(_) | Value::String(_) | Value::Boolean(_) | Value::BuiltinWord(_))
     }
 }

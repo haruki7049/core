@@ -1,4 +1,3 @@
-use core_cli;
 use core_lang::ast::AST;
 use core_lang::evaluator;
 use directories::ProjectDirs;

@@ -1,4 +1,4 @@
-use clap::Command;
+use clap::{Command, arg};
 use core_lang::ast::AST;
 use core_lang::ast::Boolean;
 use core_lang::ast::BuiltinWord;
@@ -7,12 +7,15 @@ use core_lang::ast::Value;
 
 pub fn cli(ast: &AST) -> Result<(), Box<dyn std::error::Error>> {
     let constants: Vec<Constant> = ast.0.clone();
-    let mut cli_options: CLIOption = judge_cli_option(constants)?;
+    let cli_options: CLIOption = judge_cli_option(constants)?;
 
     if cli_options.use_clap {
         let matches = Command::new("core")
             .version(env!("CARGO_PKG_VERSION"))
+            .arg(arg!(<PATH> "FILEPATH"))
             .get_matches();
+
+        dbg!(matches);
     }
 
     Ok(())
