@@ -13,6 +13,7 @@ pub enum Value {
     Constant(Box<Constant>),
     List(Vec<Value>),
     Number(u64),
+    Lambda((Vec<Value>, Vec<Value>)),
     String(String),
     Boolean(Boolean),
     Word(String),

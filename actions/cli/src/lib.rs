@@ -1,4 +1,4 @@
-use clap::{Arg, Command};
+use argparse::{ArgumentParser, Store};
 use core_lang::ast::AST;
 use core_lang::ast::Boolean;
 use core_lang::ast::BuiltinWord;
@@ -10,22 +10,16 @@ pub fn cli(ast: &AST) -> Result<PathBuf, Box<dyn std::error::Error>> {
     let constants: Vec<Constant> = ast.0.clone();
     let cli_options: CLIOption = judge_cli_option(constants)?;
 
-    if cli_options.use_clap {
-        let matches = Command::new("core")
-            .version(env!("CARGO_PKG_VERSION"))
-            .arg(
-                Arg::new("PATH")
-                    .required(true)
-                    .value_parser(clap::value_parser!(PathBuf)),
-            )
-            .get_matches();
+    let mut path: PathBuf = PathBuf::new();
 
-        if let Some(path) = matches.get_one::<PathBuf>("PATH") {
-            return Ok(path.clone());
-        }
+    if cli_options.enable {
+        let mut parser = ArgumentParser::new();
+        parser.set_description(env!("CARGO_PKG_DESCRIPTION"));
+        parser.refer(&mut path).add_argument("FILENAME", Store, "");
+        parser.parse_args_or_exit();
     }
 
-    panic!("Failed to get path")
+    Ok(path)
 }
 
 fn judge_cli_option(constants: Vec<Constant>) -> Result<CLIOption, Box<dyn std::error::Error>> {
@@ -33,19 +27,22 @@ fn judge_cli_option(constants: Vec<Constant>) -> Result<CLIOption, Box<dyn std::
 
     for constant in constants {
         if constant.name() == Value::BuiltinWord(BuiltinWord::Cli) {
-            let list: Vec<Value> = match constant.value() {
-                Value::List(v) => v,
+            let (_args, expr): (Vec<Value>, Vec<Value>) = match constant.value() {
+                Value::SExpression(values) => match &values[0] {
+                    Value::Lambda((args, expr)) => (args.clone(), expr.clone()),
+                    _ => panic!(),
+                }
                 _ => panic!(),
             };
 
-            for value in list {
+            for value in expr {
                 let function = value.car()?;
 
                 match function {
                     Value::Word(v) => match v.as_str() {
-                        "use-clap" => {
+                        "enable" => {
                             let mut v: Vec<Value> = value.cdr()?;
-                            result.use_clap = read_boolean(&v.pop().unwrap())?;
+                            result.enable = read_boolean(&v.pop().unwrap())?;
 
                             if v.pop().is_some() {
                                 panic!();
@@ -74,5 +71,5 @@ fn read_boolean(value: &Value) -> Result<bool, Box<dyn std::error::Error>> {
 
 #[derive(Debug, Default)]
 struct CLIOption {
-    use_clap: bool,
+    enable: bool,
 }

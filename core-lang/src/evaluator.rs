@@ -116,12 +116,12 @@ fn eval_sexpr(mut tokens: Vec<Token>) -> Result<Value, Box<dyn std::error::Error
             }
             Literal::Lambda => {
                 let args_t: Token = tokens.pop().ok_or("Failed to read arguments")?;
-                let value_t: Token = tokens.pop().ok_or("Failed to read value")?;
+                let expr_t: Token = tokens.pop().ok_or("Failed to read expr")?;
 
-                dbg!(args_t);
-                dbg!(value_t);
+                let args: Vec<Value> = vec![eval_value(args_t)?];
+                let expr: Vec<Value> = vec![eval_value(expr_t)?];
 
-                todo!("Lambda is not implemented yet")
+                result.push(Value::Lambda((args, expr)));
             }
             _ => todo!(),
         },
