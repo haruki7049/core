@@ -1,24 +1,29 @@
-use clap::{Command, arg};
+use clap::{Command, Arg};
+use std::path::PathBuf;
 use core_lang::ast::AST;
 use core_lang::ast::Boolean;
 use core_lang::ast::BuiltinWord;
 use core_lang::ast::Constant;
 use core_lang::ast::Value;
 
-pub fn cli(ast: &AST) -> Result<(), Box<dyn std::error::Error>> {
+pub fn cli(ast: &AST) -> Result<PathBuf, Box<dyn std::error::Error>> {
     let constants: Vec<Constant> = ast.0.clone();
     let cli_options: CLIOption = judge_cli_option(constants)?;
 
     if cli_options.use_clap {
         let matches = Command::new("core")
             .version(env!("CARGO_PKG_VERSION"))
-            .arg(arg!(<PATH> "FILEPATH"))
+            .arg(Arg::new("PATH")
+                .required(true)
+                .value_parser(clap::value_parser!(PathBuf)))
             .get_matches();
 
-        dbg!(matches);
+        if let Some(path) = matches.get_one::<PathBuf>("PATH") {
+            return Ok(path.clone());
+        }
     }
 
-    Ok(())
+    panic!("Failed to get path")
 }
 
 fn judge_cli_option(constants: Vec<Constant>) -> Result<CLIOption, Box<dyn std::error::Error>> {

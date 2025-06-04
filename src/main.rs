@@ -5,7 +5,9 @@ use std::path::PathBuf;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ast = load_config()?;
-    core_cli::cli(&ast)?;
+    let path = core_cli::cli(&ast)?;
+
+    dbg!(path);
 
     Ok(())
 }
