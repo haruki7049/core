@@ -31,7 +31,7 @@ fn judge_cli_option(constants: Vec<Constant>) -> Result<CLIOption, Box<dyn std::
                 Value::SExpression(values) => match &values[0] {
                     Value::Lambda((args, expr)) => (args.clone(), expr.clone()),
                     _ => panic!(),
-                }
+                },
                 _ => panic!(),
             };
 
