@@ -53,8 +53,6 @@ fn judge_cli_option(constants: Vec<Constant>) -> Result<CLIOption, Box<dyn std::
 }
 
 fn read_boolean(value: &Value) -> Result<bool, Box<dyn std::error::Error>> {
-    dbg!(&value);
-
     match value {
         Value::Boolean(v) => match v {
             Boolean::T => Ok(true),
