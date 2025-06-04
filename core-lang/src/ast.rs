@@ -1,13 +1,13 @@
 #[derive(Debug)]
 pub struct AST(pub Vec<Constant>);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Constant {
     pub name: Value,
     pub value: Value,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Value {
     SExpression(Vec<Value>),
     Constant(Box<Constant>),
@@ -19,13 +19,13 @@ pub enum Value {
     BuiltinWord(BuiltinWord),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Boolean {
     T,
     Nil,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum BuiltinWord {
     Main,
     Cli,
@@ -39,4 +39,44 @@ pub enum BuiltinWord {
     Define,
     DefineSyntax,
     CallCc,
+}
+
+impl Constant {
+    pub fn name(&self) -> Value {
+        self.name.clone()
+    }
+
+    pub fn value(&self) -> Value {
+        self.value.clone()
+    }
+}
+
+impl Value {
+    pub fn car(&self) -> Result<Value, Box<dyn std::error::Error>> {
+        match self {
+            Value::SExpression(v) => Ok(v[0].clone()),
+            Value::List(v) => Ok(v[0].clone()),
+            _ => panic!(),
+        }
+    }
+
+    pub fn cdr(&self) -> Result<Vec<Value>, Box<dyn std::error::Error>> {
+        let mut value: Vec<Value> = match self {
+            Value::SExpression(v) => v.clone(),
+            _ => todo!(),
+        };
+
+        value.reverse();
+        value.pop();
+        value.reverse();
+        
+        Ok(value)
+    }
+
+    pub fn is_atom(&self) -> bool {
+        match self {
+            Value::Number(_) | Value::String(_) | Value::Boolean(_) | Value::BuiltinWord(_) => true,
+            _ => false,
+        }
+    }
 }
