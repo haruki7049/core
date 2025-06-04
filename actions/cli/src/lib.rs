@@ -9,7 +9,7 @@ pub fn cli(ast: &AST) -> Result<(), Box<dyn std::error::Error>> {
     let constants: Vec<Constant> = ast.0.clone();
     let mut cli_options: CLIOption = judge_cli_option(constants)?;
 
-    if cli_options.use_cli {
+    if cli_options.use_clap {
         let matches = Command::new("core")
             .version(env!("CARGO_PKG_VERSION"))
             .get_matches();
@@ -35,7 +35,7 @@ fn judge_cli_option(constants: Vec<Constant>) -> Result<CLIOption, Box<dyn std::
                     Value::Word(v) => match v.as_str() {
                         "use-clap" => {
                             let mut v: Vec<Value> = value.cdr()?;
-                            result.use_cli = read_boolean(&v.pop().unwrap())?;
+                            result.use_clap = read_boolean(&v.pop().unwrap())?;
 
                             if v.pop().is_some() {
                                 panic!();
@@ -66,5 +66,5 @@ fn read_boolean(value: &Value) -> Result<bool, Box<dyn std::error::Error>> {
 
 #[derive(Debug, Default)]
 struct CLIOption {
-    use_cli: bool,
+    use_clap: bool,
 }
