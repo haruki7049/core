@@ -1,0 +1,7 @@
+[package]
+name = "core-editor"
+edition = "2024"
+version.workspace = true
+
+[dependencies]
+core-lang = { path = "../../core-lang" }

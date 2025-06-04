@@ -11,9 +11,10 @@ repository = "https://github.com/haruki7049/core"
 [workspace]
 resolver = "3"
 package.version = "0.1.0-dev"
-members = ["actions/cli", "core-lang"]
+members = ["actions/cli", "actions/editor", "core-lang"]
 
 [dependencies]
 directories = "6.0.0"
 core-lang = { path = "core-lang" }
 core-cli = { path = "actions/cli" }
+core-editor = { path = "actions/editor" }

@@ -34,6 +34,7 @@ name = "core"
 version = "0.0.0"
 dependencies = [
  "core-cli",
+ "core-editor",
  "core-lang",
  "directories",
 ]
@@ -43,6 +44,13 @@ name = "core-cli"
 version = "0.1.0-dev"
 dependencies = [
  "argparse",
+ "core-lang",
+]
+
+[[package]]
+name = "core-editor"
+version = "0.1.0-dev"
+dependencies = [
  "core-lang",
 ]
 
